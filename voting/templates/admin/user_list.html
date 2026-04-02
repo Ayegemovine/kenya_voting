@@ -1,0 +1,89 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Voter Directory{% endblock %}
+{% block page_title %}Voter Directory & Access Control{% endblock %}
+
+{% block admin_content %}
+<div class="table-header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px;">
+    <form method="GET" action="{% url 'user_list' %}" class="search-box" style="position: relative; flex: 1; max-width: 400px;">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+        <input type="text" name="q" placeholder="Search name, ID or county..." value="{{ query }}" 
+               style="width: 100%; padding: 14px 20px 14px 45px; border-radius: 16px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; outline: none; transition: 0.3s;">
+    </form>
+    
+    <a href="{% url 'create_voter' %}" class="btn-add-user" 
+       style="background: var(--primary); color: white; padding: 14px 24px; border-radius: 16px; text-decoration: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: 0.3s;">
+        <i class="fa-solid fa-user-plus"></i> Create New Voter
+    </a>
+</div>
+
+<div class="table-container" style="background: white; border-radius: 30px; border: 1px solid var(--border); overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8fafc;">
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">User Identity</th>
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">National ID</th>
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">County</th>
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Status</th>
+                <th style="text-align: right; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td style="padding: 20px; border-bottom: 1px solid #f1f5f9;">
+                    <div class="user-info" style="display: flex; align-items: center; gap: 15px;">
+                        <div class="avatar" style="width: 40px; height: 40px; border-radius: 12px; background: {% if u.is_staff %}var(--primary){% else %}#e2e8f0{% endif %}; display: flex; align-items: center; justify-content: center; font-weight: 800; color: {% if u.is_staff %}white{% else %}var(--primary){% endif %};">
+                            {{ u.username|slice:":1"|upper }}
+                        </div>
+                        <div>
+                            <span style="display: block; font-weight: 700; color: var(--primary);">{{ u.username }}</span>
+                            <span style="font-size: 12px; color: #94a3b8;">{{ u.email }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 20px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: var(--primary);">{{ u.voterprofile.national_id }}</td>
+                <td style="padding: 20px; border-bottom: 1px solid #f1f5f9;"><span style="font-weight: 600; color: #64748b;">{{ u.voterprofile.county }}</span></td>
+                <td style="padding: 20px; border-bottom: 1px solid #f1f5f9;">
+                    {% if u.voterprofile.has_voted %}
+                        <span class="badge" style="padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #dcfce7; color: #15803d;">Ballot Cast</span>
+                    {% else %}
+                        <span class="badge" style="padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fef2f2; color: #b91c1c;">Waiting</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 20px; border-bottom: 1px solid #f1f5f9; text-align: right;">
+                    <div class="action-btns" style="display: flex; gap: 8px; justify-content: flex-end;">
+                        <a href="{% url 'edit_user' u.id %}" class="btn-tool edit" style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #eff6ff; color: var(--accent); text-decoration: none;"><i class="fa-solid fa-user-pen"></i></a>
+                        {% if not u.is_superuser %}
+                        <a href="{% url 'delete_user' u.id %}" onclick="return confirm('Delete this voter?')" class="btn-tool delete" style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #fff1f2; color: #ef4444; text-decoration: none;"><i class="fa-solid fa-trash-can"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination" style="padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top: 1px solid var(--border);">
+        <span style="font-size: 13px; color: #94a3b8; font-weight: 600;">
+            Showing {{ users.start_index }} - {{ users.end_index }} of {{ users.paginator.count }}
+        </span>
+        <div style="display: flex; gap: 10px;">
+            {% if users.has_previous %}
+                <a href="?page={{ users.previous_page_number }}&q={{ query }}" class="page-link" style="padding: 8px 16px; border-radius: 10px; background: white; border: 1px solid var(--border); text-decoration: none; color: var(--primary); font-weight: 700; font-size: 13px;">Previous</a>
+            {% endif %}
+            {% if users.has_next %}
+                <a href="?page={{ users.next_page_number }}&q={{ query }}" class="page-link" style="padding: 8px 16px; border-radius: 10px; background: white; border: 1px solid var(--border); text-decoration: none; color: var(--primary); font-weight: 700; font-size: 13px;">Next Page</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-box input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+    .btn-tool:hover { transform: scale(1.1); }
+    .btn-add-user:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1); }
+</style>
+{% endblock %}

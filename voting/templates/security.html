@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="background: var(--primary-blue); color: white; padding: 120px 5%;">
+    <div class="container">
+        <h1 style="font-size: 4rem; margin-bottom: 20px;">Built on a Foundation of Trust</h1>
+        <p style="font-size: 1.25rem; opacity: 0.8; max-width: 700px;">
+            We employ multi-layered cryptographic protocols to ensure that every vote is 
+            <strong>Anonymous, Immutable, and Verifiable.</strong>
+        </p>
+    </div>
+</div>
+
+<div class="container" style="margin-top: -60px;">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+        <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);">
+            <div style="font-size: 40px; margin-bottom: 20px;">🔑</div>
+            <h3>AES-256 Encryption</h3>
+            <p style="color: var(--text-muted); margin-top: 15px;">Ballots are encrypted locally on your device before being transmitted to the central ledger.</p>
+        </div>
+        <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);">
+            <div style="font-size: 40px; margin-bottom: 20px;">⛓️</div>
+            <h3>Blockchain Anchoring</h3>
+            <p style="color: var(--text-muted); margin-top: 15px;">Once cast, votes are recorded on a private, permissioned ledger that cannot be altered or deleted.</p>
+        </div>
+        <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);">
+            <div style="font-size: 40px; margin-bottom: 20px;">🕵️</div>
+            <h3>Zero-Knowledge Proofs</h3>
+            <p style="color: var(--text-muted); margin-top: 15px;">We prove your eligibility to vote without ever knowing your actual identity in the tallying phase.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

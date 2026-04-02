@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOTE.SECURE | National Electoral System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0A2564;
+            --accent-blue: #1E40AF;
+            --success-green: #10B981;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --bg-light: #F9FAFB;
+        }
+
+        /* ── RESET & BASE ── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: white; 
+            color: var(--text-main); 
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── GLOBAL LAYOUT CONTAINER ── */
+        /* Adjusted: Padding reduced to 2% for a wider, more modern feel */
+        .container { 
+            width: 100%; 
+            max-width: 1440px;      
+            margin: 0 auto;         
+            padding: 0 2%;          
+        }
+
+        /* ── MARGIN-TO-MARGIN NAVIGATION ── */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 2%; /* Matches 2% container padding */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.02);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .main-logo {
+            height: 42px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .main-logo:hover {
+            transform: scale(1.02);
+        }
+
+        /* ── INTERACTIVE PILL MENU ── */
+        .nav-links { 
+            display: flex; 
+            gap: 5px; 
+            list-style: none; 
+            background: #F3F4F6; 
+            padding: 5px;
+            border-radius: 16px;
+            align-items: center;
+        }
+
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-size: 14px; 
+            font-weight: 600; 
+            padding: 10px 20px; 
+            border-radius: 12px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover { 
+            color: var(--primary-blue); 
+            background: white; 
+        }
+
+        .nav-links a.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(10, 37, 100, 0.15);
+        }
+
+        .nav-links a.vote-link {
+            color: var(--success-green);
+        }
+        .nav-links a.vote-link:hover {
+            background: #ECFDF5;
+        }
+
+        /* ── AUTHENTICATION BUTTONS ── */
+        .auth-buttons { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+
+        .btn-login { 
+            text-decoration: none; 
+            color: var(--primary-blue); 
+            font-weight: 700; 
+            font-size: 14px; 
+            padding: 10px 18px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background: rgba(10, 37, 100, 0.05);
+        }
+
+        .btn-register { 
+            background: var(--primary-blue); 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(10, 37, 100, 0.1);
+        }
+
+        .btn-register:hover { 
+            background: var(--accent-blue); 
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(10, 37, 100, 0.2);
+        }
+
+        /* ── FOOTER ── */
+        .footer { 
+            padding: 80px 0 40px; 
+            border-top: 1px solid #E5E7EB; 
+            margin-top: 100px; 
+            background: #F9FAFB;
+        }
+
+        .footer-grid { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr; 
+            gap: 60px; 
+        }
+
+        .footer-bottom { 
+            display: flex; 
+            justify-content: space-between; 
+            padding-top: 40px; 
+            margin-top: 60px;
+            border-top: 1px solid #E5E7EB; 
+            font-size: 11px; 
+            color: #9CA3AF; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .footer-link:hover {
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo-container">
+            <img src="https://www.mghihp.edu/sites/default/files/mgh-ihp_logo_rgb_horizontal.svg" alt="VOTE.SECURE" class="main-logo">
+        </a>
+        
+        <ul class="nav-links">
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+            <li><a href="/how-it-works/" class="{% if 'how-it-works' in request.path %}active{% endif %}">How it Works</a></li>
+            <li><a href="/security/" class="{% if 'security' in request.path %}active{% endif %}">Security</a></li>
+            
+            {% if user.is_authenticated %}
+                <li><a href="/vote/" class="vote-link {% if 'vote' in request.path %}active{% endif %}">🗳️ Live Ballot</a></li>
+            {% endif %}
+            
+            <li><a href="/results/" class="{% if 'results' in request.path %}active{% endif %}">Results</a></li>
+        </ul>
+
+        <div class="auth-buttons">
+            {% if not user.is_authenticated %}
+                <a href="/login/" class="btn-login">Log In</a>
+                <a href="/register/" class="btn-register">Register to Vote</a>
+            {% else %}
+                <a href="/dashboard/" class="btn-login" style="background: rgba(10, 37, 100, 0.05);">Dashboard</a>
+                <a href="/logout/" class="btn-login" style="border: 1px solid #E5E7EB; margin-left: 5px;">Log Out</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <div class="container" style="margin-top: 20px;">
+                {% for message in messages %}
+                    <div style="padding: 15px 25px; border-radius: 12px; margin-bottom: 10px; font-weight: 600; font-size: 14px; 
+                        {% if message.tags == 'success' %} background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0;
+                        {% else %} background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <img src="https://www.mghihp.edu/sites/default/files/mgh-ihp_logo_rgb_horizontal.svg" alt="VOTE.SECURE" style="height: 32px; margin-bottom: 20px; opacity: 0.8;">
+                    <p style="color: var(--text-muted); font-size: 14px; max-width: 380px;">
+                        Ensuring a transparent and secure democratic future through encrypted digital voting and immutable records. ISO 27001 Certified.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 20px; font-size: 13px; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1px;">Platform</h4>
+                    <ul style="list-style:none; font-size: 14px; color: var(--text-muted); line-height: 2.2;">
+                        <li><a href="/system-health/" class="footer-link">Network Status</a></li>
+                        <li>Security Audit</li>
+                        <li>Voter Ledger</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 20px; font-size: 13px; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1px;">Legal</h4>
+                    <ul style="list-style:none; font-size: 14px; color: var(--text-muted); line-height: 2.2;">
+                        <li>Privacy Policy</li>
+                        <li>Terms of Service</li>
+                        <li>Compliance</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2026 VOTE.SECURE NATIONAL ELECTORAL SYSTEM.</div>
+                <div style="display: flex; gap: 20px;">
+                    <span>Public Ledger: Verified</span>
+                    <span>System: Operational</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Security Audit Log{% endblock %}
+{% block page_title %}System Security Audit{% endblock %}
+
+{% block admin_content %}
+<div class="audit-container" style="background: white; border-radius: 32px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+    <div class="audit-header" style="padding: 30px 40px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+        <div class="header-info">
+            <h3 style="margin: 0; font-weight: 800; color: var(--primary);">Access & Action Ledger</h3>
+            <p style="margin: 5px 0 0; font-size: 13px; color: #64748b;">Immutable history of all administrative changes.</p>
+        </div>
+        <div class="security-badge" style="background: #f1f5f9; padding: 8px 16px; border-radius: 100px; font-size: 11px; font-weight: 800; color: var(--primary); letter-spacing: 1px;">
+            <i class="fa-solid fa-lock"></i> AES-256 LOGGING
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8fafc;">
+                <th style="text-align: left; padding: 20px 40px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Administrator</th>
+                <th style="text-align: left; padding: 20px 40px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Action Performed</th>
+                <th style="text-align: left; padding: 20px 40px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">IP Address</th>
+                <th style="text-align: right; padding: 20px 40px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in audit_logs %}
+            <tr>
+                <td style="padding: 22px 40px; border-bottom: 1px solid #f1f5f9; vertical-align: middle;">
+                    <div class="admin-tag" style="display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--primary);">
+                        <div class="admin-avatar" style="width: 32px; height: 32px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                            {{ log.admin.username|slice:":1"|upper }}
+                        </div>
+                        <span>{{ log.admin.username }}</span>
+                    </div>
+                </td>
+                <td style="padding: 22px 40px; border-bottom: 1px solid #f1f5f9; vertical-align: middle;">
+                    <span class="action-text" style="font-weight: 600; color: #1e293b;">{{ log.action }}</span>
+                </td>
+                <td style="padding: 22px 40px; border-bottom: 1px solid #f1f5f9; vertical-align: middle;">
+                    <span class="ip-address" style="font-size: 12px; color: var(--accent); font-weight: 700; background: #eff6ff; padding: 4px 10px; border-radius: 6px;">
+                        {{ log.ip_address }}
+                    </span>
+                </td>
+                <td style="padding: 22px 40px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; text-align: right;">
+                    <span class="timestamp" style="font-family: 'Courier New', Courier, monospace; color: #64748b; font-weight: 700;">
+                        {{ log.timestamp|date:"Y-m-d H:i:s" }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 50px; color: #64748b; font-weight: 600;">
+                    No audit records found in the current ledger.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-pagination" style="padding: 25px 40px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border);">
+        <span style="font-size: 13px; color: #64748b; font-weight: 700;">
+            Entry {{ audit_logs.start_index }} - {{ audit_logs.end_index }} of {{ audit_logs.paginator.count }}
+        </span>
+        <div style="display: flex; gap: 10px;">
+            {% if audit_logs.has_previous %}
+                <a href="?page={{ audit_logs.previous_page_number }}" class="nav-btn" style="padding: 10px 20px; border-radius: 12px; background: white; border: 1px solid var(--border); color: var(--primary); text-decoration: none; font-weight: 700; font-size: 13px;">Previous</a>
+            {% endif %}
+            {% if audit_logs.has_next %}
+                <a href="?page={{ audit_logs.next_page_number }}" class="nav-btn" style="padding: 10px 20px; border-radius: 12px; background: white; border: 1px solid var(--border); color: var(--primary); text-decoration: none; font-weight: 700; font-size: 13px;">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .nav-btn:hover { border-color: var(--accent); color: var(--accent); transition: 0.2s; }
+    .top-nav h2 { color: var(--primary); }
+</style>
+{% endblock %}

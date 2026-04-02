@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0;">
+    <div style="text-align: center; margin-bottom: 80px;">
+        <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 800; color: var(--success-green); font-size: 12px; display: block; margin-bottom: 15px;">
+            ● THE PROCESS
+        </span>
+        <h1 style="font-size: 4rem; color: var(--primary-blue); font-weight: 900; letter-spacing: -2px;">A Seamless Path to Participation</h1>
+        <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 20px auto 0;">
+            Our system is built on three core pillars: security, privacy, and simplicity. Here is how we protect your vote.
+        </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; position: relative;">
+        
+        <div style="background: white; border: 1px solid #E2E8F0; padding: 50px; border-radius: 40px; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.02);" class="step-card">
+            <div style="font-size: 14px; font-weight: 900; color: #E2E8F0; position: absolute; top: 30px; right: 40px;">01</div>
+            <div style="background: #EFF6FF; width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 25px;">
+                🆔
+            </div>
+            <h3 style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 15px; font-weight: 800;">Identity Verification</h3>
+            <p style="color: #64748B; line-height: 1.7; font-size: 15px;">
+                Connect your digital National ID or use our secure biometric portal. Our system performs a <strong>real-time check</strong> against the national registry to verify eligibility without storing your raw sensitive data.
+            </p>
+        </div>
+
+        <div style="background: white; border: 1px solid #E2E8F0; padding: 50px; border-radius: 40px; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.02);" class="step-card">
+            <div style="font-size: 14px; font-weight: 900; color: #E2E8F0; position: absolute; top: 30px; right: 40px;">02</div>
+            <div style="background: #ECFDF5; width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 25px;">
+                🗳️
+            </div>
+            <h3 style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 15px; font-weight: 800;">Secure Ballot Casting</h3>
+            <p style="color: #64748B; line-height: 1.7; font-size: 15px;">
+                Once verified, access your customized ballot based on your registered county. The interface is designed for <strong>zero distractions</strong>, ensuring your choice is clear, intentional, and final.
+            </p>
+        </div>
+
+        <div style="background: white; border: 1px solid #E2E8F0; padding: 50px; border-radius: 40px; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.02);" class="step-card">
+            <div style="font-size: 14px; font-weight: 900; color: #E2E8F0; position: absolute; top: 30px; right: 40px;">03</div>
+            <div style="background: #FFF7ED; width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 25px;">
+                🔗
+            </div>
+            <h3 style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 15px; font-weight: 800;">Immutable Anchorage</h3>
+            <p style="color: #64748B; line-height: 1.7; font-size: 15px;">
+                Your vote is encrypted and hashed into the <strong>public ledger</strong>. You receive a cryptographic receipt that allows you to verify your vote exists in the final tally without revealing your choice.
+            </p>
+        </div>
+
+    </div>
+
+    <div style="margin-top: 80px; text-align: center; background: var(--primary-blue); padding: 60px; border-radius: 40px; color: white;">
+        <h2 style="font-size: 2rem; margin-bottom: 20px;">Ready to exercise your right?</h2>
+        <p style="opacity: 0.8; margin-bottom: 35px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            Join over {{ total_voters|default:"500,000" }} Kenyans who have already transitioned to the future of digital democracy.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="/register/" style="background: var(--success-green); color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s;" class="btn-hover">Start Verification</a>
+            <a href="/security/" style="border: 2px solid rgba(255,255,255,0.2); color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; font-weight: 700;">Security Specs</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .step-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 25px 50px rgba(10, 37, 100, 0.05) !important;
+    }
+    .btn-hover:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+</style>
+{% endblock %}

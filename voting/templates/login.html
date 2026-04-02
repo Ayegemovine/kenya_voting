@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 80px auto; padding: 50px; border: 1px solid #E5E7EB; border-radius: 24px; background: white; box-shadow: 0 15px 40px rgba(0,0,0,0.04);">
+    
+    <div style="text-align: center; margin-bottom: 40px;">
+        <span style="font-size: 40px;">🔑</span>
+        <h1 style="color: var(--primary-blue); font-size: 32px; margin-top: 15px;">Voter Login</h1>
+        <p style="color: var(--text-muted); font-size: 15px; margin-top: 10px;">Enter your credentials to access your secure ballot.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                Username
+            </label>
+            <div class="form-group">
+                {{ form.username }}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                Password
+            </label>
+            <div class="form-group">
+                {{ form.password }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span>🔓</span> Login and Vote
+        </button>
+
+    </form>
+
+    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #F3F4F6; text-align: center;">
+        <p style="color: var(--text-muted); font-size: 14px;">
+            New voter? 
+            <a href="/register/" style="color: var(--accent-blue); font-weight: 700; text-decoration: none; margin-left: 5px;">Register here</a>
+        </p>
+    </div>
+
+    <div style="margin-top: 25px; background: #F9FAFB; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 18px;">🛡️</span>
+        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+            Your login session is encrypted with end-to-end SSL protocols to ensure total identity protection.
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Styling the Django auto-generated inputs to match the VOTE.SECURE theme */
+    input[type="text"], 
+    input[type="password"], 
+    input[type="email"] {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1.5px solid #E5E7EB;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.2s ease;
+        background: #FDFDFD;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.08);
+    }
+</style>
+{% endblock %}

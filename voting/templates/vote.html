@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0; max-width: 900px;">
+    
+    {% if questions %}
+        <div style="text-align: center; margin-bottom: 50px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: #ECFDF5; padding: 8px 20px; border-radius: 50px; margin-bottom: 20px;">
+                <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                <span style="text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: #065F46; font-size: 11px;">
+                    Secure Ballot Session Active
+                </span>
+            </div>
+            <h1 style="font-size: 3.5rem; color: #0A2564; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px;">Available Polls</h1>
+            <p style="color: #64748B; font-size: 1.1rem;">You have <strong>{{ questions|length }}</strong> category{{ questions|pluralize:"y,ies" }} remaining to participate in.</p>
+        </div>
+
+        <form action="{% url 'submit-vote' %}" method="POST" id="ballotForm">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div style="background: white; border: 1px solid #E2E8F0; border-radius: 32px; padding: 45px; margin-bottom: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.03); position: relative; transition: 0.3s;" class="poll-card">
+                
+                <div style="margin-bottom: 20px;">
+                    {% if question.deadline %}
+                        <div class="countdown-timer" 
+                             id="timer-{{ question.id }}" 
+                             data-deadline="{{ question.deadline|date:'c' }}" 
+                             style="display: inline-flex; align-items: center; gap: 8px; background: #FFF7ED; color: #C2410C; padding: 10px 20px; border-radius: 50px; font-size: 12px; font-weight: 800; border: 1px solid #FFEDD5; font-family: 'Inter', monospace; transition: 0.3s;">
+                            <span style="opacity: 0.6;">⏳ ENDS IN:</span>
+                            <span class="timer-display">Calculating...</span>
+                        </div>
+                    {% else %}
+                        <span style="background: #F0FDF4; color: #166534; padding: 10px 20px; border-radius: 50px; font-size: 12px; font-weight: 800;">
+                            ● SESSION OPEN
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                    <div style="max-width: 80%;">
+                        <h3 style="color: #0A2564; margin: 0; font-size: 1.8rem; font-weight: 800;">{{ question.text }}</h3>
+                        {% if question.description %}
+                            <p style="font-size: 15px; color: #94A3B8; margin-top: 8px; line-height: 1.5;">{{ question.description }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="button" onclick="clearSelection('question_{{ question.id }}')" style="background: #FEE2E2; color: #EF4444; border: none; padding: 10px 20px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s; white-space: nowrap;">
+                        ✕ CLEAR
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    {% for choice in question.choices.all %}
+                    <label class="choice-card" style="display: flex; align-items: center; padding: 25px; border: 2.5px solid #F1F5F9; border-radius: 22px; cursor: pointer; transition: 0.3s; position: relative; background: white;">
+                        <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}" style="width: 24px; height: 24px; margin-right: 18px; accent-color: #0A2564; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <strong style="display: block; color: #1E293B; font-size: 1.15rem; font-weight: 700;">{{ choice.option_text }}</strong>
+                            <span style="color: #64748B; text-transform: uppercase; font-size: 11px; font-weight: 800; letter-spacing: 1px;">{{ choice.party }}</span>
+                        </div>
+                    </label>
+                    {% empty %}
+                        <div style="padding: 20px; background: #FFF7ED; border: 1px solid #FFEDD5; border-radius: 15px; grid-column: 1/-1;">
+                            <p style="color: #C2410C; font-size: 14px; margin: 0;">⚠️ No candidates found for this category.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="text-align: center; margin-top: 60px; background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); padding: 60px; border-radius: 40px; border: 1px solid #E2E8F0;">
+                <h3 style="color: #0A2564; margin-bottom: 10px;">Ready to Cast Your Ballot?</h3>
+                <p style="color: #64748B; margin-bottom: 35px; font-size: 0.95rem;">Review your selections carefully. This action cannot be undone once submitted to the ledger.</p>
+                
+                <button type="submit" class="btn-primary" style="padding: 24px 100px; font-size: 1.4rem; border-radius: 100px; background: #0A2564; color: white; border: none; cursor: pointer; font-weight: 800; box-shadow: 0 25px 50px rgba(10, 37, 100, 0.25); transition: 0.3s;">
+                    Confirm & Sign Ballot
+                </button>
+                
+                <div style="display: flex; justify-content: center; gap: 30px; margin-top: 35px; opacity: 0.6;">
+                    <span style="font-size: 11px; font-weight: 700;">🔒 AES-256 ENCRYPTED</span>
+                    <span style="font-size: 11px; font-weight: 700;">🔗 BLOCKCHAIN VERIFIED</span>
+                </div>
+            </div>
+        </form>
+
+    {% else %}
+        <div style="text-align: center; padding: 120px 0;">
+            <div style="font-size: 100px; margin-bottom: 30px;">🏅</div>
+            <h1 style="font-size: 3.5rem; color: #0A2564; font-weight: 900; letter-spacing: -2px;">Civic Duty Fulfilled</h1>
+            <p style="color: #64748B; font-size: 1.3rem; margin-bottom: 50px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                You have successfully participated in every available election category. Your voice has been recorded in the national ledger.
+            </p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <a href="/results/" style="text-decoration: none; background: #0A2564; color: white; padding: 20px 50px; border-radius: 100px; font-weight: 800; font-size: 1.1rem; box-shadow: 0 15px 30px rgba(10,37,100,0.2);">View Results Center</a>
+                <a href="/dashboard/" style="text-decoration: none; background: white; color: #0A2564; border: 2px solid #E2E8F0; padding: 20px 50px; border-radius: 100px; font-weight: 800; font-size: 1.1rem;">My Account</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .choice-card:hover { 
+        border-color: #CBD5E1; 
+        background: #F8FAFC;
+        transform: translateY(-3px);
+    }
+    .choice-card:has(input:checked) {
+        border-color: #0A2564 !important;
+        background: #F0F7FF !important;
+        box-shadow: 0 10px 25px rgba(10, 37, 100, 0.08);
+    }
+    .btn-primary:hover {
+        transform: translateY(-5px) scale(1.02);
+        background: #1E40AF;
+    }
+</style>
+
+<script>
+    function clearSelection(name) {
+        const radios = document.getElementsByName(name);
+        for(let i=0; i<radios.length; i++) {
+            radios[i].checked = false;
+        }
+    }
+
+    // --- COUNTDOWN LOGIC ---
+    function startCountdown() {
+        const timers = document.querySelectorAll('.countdown-timer');
+        
+        const ticker = setInterval(() => {
+            timers.forEach(timer => {
+                const deadline = new Date(timer.getAttribute('data-deadline')).getTime();
+                const now = new Date().getTime();
+                const diff = deadline - now;
+                const display = timer.querySelector('.timer-display');
+
+                if (diff > 0) {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    display.innerText = `${d}d ${h}h ${m}m ${s}s`;
+
+                    // Urgent state: Less than 1 hour remains (3600000ms)
+                    if (diff < 3600000) {
+                        timer.style.background = "#FEF2F2";
+                        timer.style.color = "#DC2626";
+                        timer.style.borderColor = "#FECACA";
+                    }
+                } else {
+                    display.innerText = "CLOSED";
+                    timer.style.opacity = "0.5";
+                    timer.style.background = "#F1F5F9";
+                    timer.style.color = "#64748B";
+                }
+            });
+        }, 1000);
+    }
+
+    // Initialize countdowns
+    startCountdown();
+
+    document.getElementById('ballotForm').onsubmit = function() {
+        const total = {{ questions|length }};
+        let selectedCount = 0;
+        
+        {% for q in questions %}
+            if (document.querySelector('input[name="question_{{ q.id }}"]:checked')) {
+                selectedCount++;
+            }
+        {% endfor %}
+
+        if (selectedCount === 0) {
+            alert("Please select at least one candidate before confirming your ballot.");
+            return false;
+        }
+
+        return confirm(`You are about to cast votes for ${selectedCount} out of ${total} available categories. This action is final and permanent. Confirm signature?`);
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="voter-dashboard">
+    <div class="container">
+        
+        <header class="voter-header">
+            <div class="welcome-text">
+                <h1>Habari, {{ request.user.username }}!</h1>
+                <p><i class="fa-solid fa-location-dot"></i> Registered in <strong>{{ profile.county }} County</strong></p>
+            </div>
+            <div class="voter-id-badge">
+                <small>National ID</small>
+                <span>{{ profile.national_id }}</span>
+            </div>
+        </header>
+
+        <section class="progress-hub">
+            <div class="hub-card main-progress">
+                <div class="progress-info">
+                    <h2>Voting Progress</h2>
+                    <p>You have completed <strong>{{ completed_count }}</strong> out of <strong>{{ total_polls }}</strong> ballots.</p>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+                    </div>
+                    <span class="percentage-label">{{ progress_percent }}% Complete</span>
+                </div>
+                <div class="status-icon">
+                    {% if progress_percent == 100 %}
+                        <i class="fa-solid fa-circle-check" style="color: var(--success-green);"></i>
+                    {% else %}
+                        <i class="fa-solid fa-hourglass-half" style="color: var(--accent-blue); animation: rotate 3s linear infinite;"></i>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="mini-card">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <div>
+                        <small>Remaining</small>
+                        <h4>{{ remaining_count }} Polls</h4>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <div>
+                        <small>Status</small>
+                        <h4>{% if profile.has_voted %}Verified{% else %}Incomplete{% endif %}</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            
+            <div class="action-section">
+                <div class="section-header-voter">
+                    <h3><i class="fa-solid fa-list-check"></i> Pending Ballots</h3>
+                    <a href="{% url 'vote' %}">View All</a>
+                </div>
+                
+                <div class="ballot-list">
+                    {% for ballot in pending_ballots %}
+                    <div class="ballot-item">
+                        <div class="ballot-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        <div class="ballot-meta">
+                            <h4>{{ ballot.text }}</h4>
+                            <small>Ends: {{ ballot.deadline|date:"d M, H:i"|default:"Open Session" }}</small>
+                        </div>
+                        <a href="{% url 'vote' %}" class="vote-btn-sm">Vote Now</a>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <i class="fa-solid fa-award"></i>
+                        <p>All clear! You've participated in every active poll.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="action-section">
+                <div class="section-header-voter">
+                    <h3><i class="fa-solid fa-circle-info"></i> Information Center</h3>
+                </div>
+                <div class="link-grid">
+                    <a href="{% url 'results' %}" class="link-card">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Live Results</span>
+                    </a>
+                    <a href="{% url 'security' %}" class="link-card">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Security</span>
+                    </a>
+                    <a href="{% url 'how_it_works' %}" class="link-card">
+                        <i class="fa-solid fa-question-circle"></i>
+                        <span>User Guide</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-blue: #0a2564;
+        --accent-blue: #3b82f6;
+        --success-green: #10b981;
+        --bg-voter: #f0f4f8;
+        --card-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    body { background-color: var(--bg-voter); font-family: 'Inter', sans-serif; }
+
+    .voter-dashboard { padding: 40px 0; }
+
+    /* Header */
+    .voter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .welcome-text h1 { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); margin: 0; letter-spacing: -1px; }
+    .welcome-text p { color: #64748b; margin-top: 5px; font-size: 1rem; }
+    .voter-id-badge { background: white; padding: 15px 25px; border-radius: 15px; text-align: right; box-shadow: var(--card-shadow); border-right: 5px solid var(--primary-blue); }
+    .voter-id-badge small { display: block; text-transform: uppercase; font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 1px; }
+    .voter-id-badge span { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); }
+
+    /* Progress Hub */
+    .progress-hub { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px; }
+    .main-progress { background: white; padding: 35px; border-radius: 25px; box-shadow: var(--card-shadow); display: flex; justify-content: space-between; align-items: center; }
+    .progress-info { flex: 1; }
+    .progress-info h2 { margin: 0 0 10px; font-size: 1.4rem; color: var(--primary-blue); font-weight: 800; }
+    .progress-bar-container { background: #edf2f7; height: 12px; border-radius: 10px; margin: 20px 0 10px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, var(--accent-blue), var(--success-green)); height: 100%; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    .percentage-label { font-weight: 800; color: var(--success-green); font-size: 0.9rem; }
+    .status-icon i { font-size: 3.5rem; margin-left: 20px; }
+
+    .quick-stats { display: flex; flex-direction: column; gap: 15px; }
+    .mini-card { background: white; padding: 20px; border-radius: 20px; display: flex; align-items: center; gap: 15px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; }
+    .mini-card i { font-size: 20px; color: var(--accent-blue); background: #eff6ff; padding: 12px; border-radius: 12px; }
+    .mini-card h4 { margin: 0; color: var(--primary-blue); font-weight: 700; }
+
+    /* Action Grid */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .action-section { background: white; padding: 30px; border-radius: 25px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; }
+    .section-header-voter { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .section-header-voter h3 { margin: 0; color: var(--primary-blue); font-size: 1.1rem; font-weight: 800; }
+    .section-header-voter a { font-size: 13px; font-weight: 700; color: var(--accent-blue); text-decoration: none; }
+
+    /* Ballot Items */
+    .ballot-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 18px; background: #f8fafc; margin-bottom: 12px; transition: 0.3s; border: 1px solid transparent; }
+    .ballot-item:hover { transform: translateY(-3px); background: white; border-color: var(--accent-blue); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .ballot-icon { width: 45px; height: 45px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .ballot-meta { flex: 1; }
+    .ballot-meta h4 { margin: 0; font-size: 14px; color: var(--primary-blue); font-weight: 700; }
+    .ballot-meta small { color: #94a3b8; font-weight: 500; }
+    .vote-btn-sm { background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-size: 12px; font-weight: 700; transition: 0.2s; }
+    .vote-btn-sm:hover { background: var(--accent-blue); }
+
+    /* Link Cards */
+    .link-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .link-card { background: #f8fafc; padding: 20px; border-radius: 20px; text-decoration: none; text-align: center; color: var(--primary-blue); transition: 0.3s; border: 1px solid transparent; }
+    .link-card:hover { background: var(--primary-blue); color: white; transform: translateY(-3px); }
+    .link-card i { display: block; font-size: 24px; margin-bottom: 10px; }
+    .link-card span { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .empty-state { text-align: center; padding: 40px 0; color: #94a3b8; }
+    .empty-state i { font-size: 3rem; margin-bottom: 15px; }
+
+    @keyframes rotate { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
+
+    @media (max-width: 992px) {
+        .progress-hub, .dashboard-grid { grid-template-columns: 1fr; }
+        .voter-header { flex-direction: column; text-align: center; gap: 20px; }
+        .voter-id-badge { text-align: center; width: 100%; border-right: none; border-bottom: 5px solid var(--primary-blue); }
+    }
+</style>
+{% endblock %}

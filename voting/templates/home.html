@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<div class="homepage-wrapper">
+    
+    <section class="hero-section">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+
+        <div class="container hero-container">
+            <div class="hero-content animate__animated animate__fadeInLeft">
+                <div class="election-badge">
+                    <span class="pulse-dot"></span> 2026 GENERAL ELECTION PORTAL
+                </div>
+                <h1 class="hero-title">The Future of <span class="text-gradient">Voting.</span></h1>
+                <p class="hero-subtitle">Experience a secure, transparent, and immutable voting process powered by next-generation encryption. Your voice, protected forever.</p>
+
+                <div class="cta-group">
+                    {% if not user.is_authenticated %}
+                        <a href="/register/" class="btn-main btn-filled">Get Verified to Vote</a>
+                        <a href="/how-it-works/" class="btn-main btn-outline">Process Overview</a>
+                    {% else %}
+                        {% if profile.has_voted %}
+                            <a href="/results/" class="btn-main btn-success">View Live Tally</a>
+                            <div class="voted-status">
+                                <i class="fa-solid fa-circle-check"></i> All Ballots Cast
+                            </div>
+                        {% else %}
+                            <a href="/vote/" class="btn-main btn-filled">
+                                {% if user_has_started %}Continue Voting{% else %}Cast Official Vote{% endif %}
+                            </a>
+                            <a href="/dashboard/" class="btn-main btn-outline">My Dashboard</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="hero-visual animate__animated animate__zoomIn animate__delay-1s">
+                <div class="image-stack">
+                    <img src="https://www.unicef.org/innocenti/sites/unicef.org.innocenti/files/styles/media_large_image/public/UN0125438.webp?itok=Ngxp8_UA" class="main-img" alt="Digital Democracy">
+                    
+                    <div class="floating-glass-card">
+                        <div class="icon-shield">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="card-text">
+                            <strong>End-to-End Secure</strong>
+                            <span>AES-256 Multi-Layer Encryption</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-bar">
+        <div class="container trust-flex">
+            <span data-aos="fade-up">IEBC VERIFIED</span>
+            <span data-aos="fade-up" data-aos-delay="100">BLOCKCHAIN ANCHORED</span>
+            <span data-aos="fade-up" data-aos-delay="200">256-BIT ENCRYPTION</span>
+            <span data-aos="fade-up" data-aos-delay="300">ISO 27001 COMPLIANT</span>
+        </div>
+    </section>
+
+    <section class="features-section container">
+        <div class="feature-grid">
+            <div class="feature-card" data-aos="fade-up">
+                <div class="feature-icon orange"><i class="fa-solid fa-bolt"></i></div>
+                <h3>Real-Time Tally</h3>
+                <p>Watch the results pour in with millisecond precision from every polling station nationwide.</p>
+            </div>
+            
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon purple"><i class="fa-solid fa-link"></i></div>
+                <h3>Immutable Record</h3>
+                <p>Once your vote is cast, it is anchored to a secure ledger that cannot be altered or deleted.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon blue"><i class="fa-solid fa-mobile-screen"></i></div>
+                <h3>Universal Access</h3>
+                <p>Vote from your desktop, tablet, or smartphone. Democracy is now in the palm of your hand.</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    :root {
+        --primary-blue: #0A2564;
+        --accent-blue: #3B82F6;
+        --success-green: #10B981;
+        --bg-light: #F8FAFC;
+        --text-slate: #475569;
+    }
+
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: white; overflow-x: hidden; }
+
+    /* Blobs */
+    .blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.15; }
+    .blob-1 { top: -200px; right: -100px; background: var(--accent-blue); }
+    .blob-2 { bottom: -100px; left: -200px; background: var(--success-green); }
+
+    /* Hero Styling */
+    .hero-section { padding: 140px 0 100px; position: relative; }
+    .hero-container { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; }
+
+    .election-badge { 
+        display: inline-flex; align-items: center; gap: 10px; background: #ECFDF5; 
+        color: #059669; padding: 10px 20px; border-radius: 100px; font-weight: 800; 
+        font-size: 11px; letter-spacing: 2px; margin-bottom: 30px;
+    }
+    .pulse-dot { width: 8px; height: 8px; background: var(--success-green); border-radius: 50%; animation: pulse 2s infinite; }
+
+    .hero-title { font-size: 5.5rem; font-weight: 800; line-height: 0.95; color: var(--primary-blue); letter-spacing: -4px; margin-bottom: 30px; }
+    .text-gradient { background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-subtitle { font-size: 1.25rem; color: var(--text-slate); line-height: 1.7; margin-bottom: 50px; max-width: 550px; }
+
+    /* Buttons */
+    .cta-group { display: flex; align-items: center; gap: 20px; }
+    .btn-main { padding: 22px 40px; border-radius: 18px; font-weight: 700; text-decoration: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .btn-filled { background: var(--primary-blue); color: white; box-shadow: 0 20px 40px rgba(10,37,100,0.2); }
+    .btn-filled:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(10,37,100,0.3); }
+    .btn-outline { border: 2px solid #E2E8F0; color: var(--primary-blue); }
+    .btn-outline:hover { background: #F8FAFC; border-color: var(--primary-blue); }
+    .btn-success { background: var(--success-green); color: white; }
+
+    /* Visual Image Stack */
+    .image-stack { position: relative; }
+    .main-img { 
+        width: 100%; border-radius: 50px; transform: perspective(1000px) rotateY(-8deg) rotateX(2deg);
+        box-shadow: 0 60px 100px rgba(0,0,0,0.15); transition: 0.5s;
+    }
+    .image-stack:hover .main-img { transform: perspective(1000px) rotateY(0deg) scale(1.02); }
+
+    .floating-glass-card {
+        position: absolute; bottom: -40px; left: -50px; background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px); border-radius: 30px; padding: 30px; border: 1px solid white;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px;
+        animation: float 6s ease-in-out infinite;
+    }
+    .icon-shield { width: 60px; height: 60px; background: var(--primary-blue); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }
+    .card-text strong { display: block; color: var(--primary-blue); font-size: 18px; }
+    .card-text span { font-size: 13px; color: var(--text-slate); font-weight: 600; }
+
+    /* Trust Bar */
+    .trust-bar { padding: 60px 0; border-top: 1px solid #F1F5F9; border-bottom: 1px solid #F1F5F9; background: #fafafa; }
+    .trust-flex { display: flex; justify-content: space-between; align-items: center; }
+    .trust-flex span { font-weight: 900; font-size: 14px; color: #CBD5E1; letter-spacing: 3px; }
+
+    /* Feature Cards */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 120px 0; }
+    .feature-card { 
+        background: white; padding: 50px 40px; border-radius: 40px; border: 1px solid #F1F5F9; 
+        transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+    .feature-card:hover { transform: translateY(-20px); border-color: var(--accent-blue); box-shadow: 0 40px 80px rgba(0,0,0,0.07); }
+    .feature-icon { width: 70px; height: 70px; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 30px; }
+    .feature-icon.orange { background: #FFF7ED; color: #F97316; }
+    .feature-icon.purple { background: #FAF5FF; color: #A855F7; }
+    .feature-icon.blue { background: #EFF6FF; color: #3B82F6; }
+    .feature-card h3 { font-size: 1.6rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 15px; }
+    .feature-card p { color: var(--text-slate); line-height: 1.7; font-weight: 500; }
+
+    /* Animations */
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+    @media (max-width: 992px) {
+        .hero-container { grid-template-columns: 1fr; text-align: center; }
+        .hero-title { font-size: 3.5rem; }
+        .hero-subtitle { margin: 0 auto 40px; }
+        .cta-group { justify-content: center; flex-direction: column; width: 100%; }
+        .btn-main { width: 100%; }
+        .floating-glass-card { display: none; }
+        .feature-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 1000, once: true });
+</script>
+
+{% endblock %}

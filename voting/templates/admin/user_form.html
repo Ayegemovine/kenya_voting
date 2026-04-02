@@ -1,0 +1,151 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div style="background: var(--bg-soft); padding: 80px 0; min-height: 80vh;">
+    <div class="container" style="display: flex; justify-content: center;">
+        <div style="background: white; width: 100%; max-width: 650px; padding: 50px; border-radius: 30px; border: 1px solid #E2E8F0; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);">
+            
+            <div style="margin-bottom: 35px;">
+                <a href="{% url 'admin_dashboard' %}" style="text-decoration: none; color: #64748B; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Manager
+                </a>
+                
+                <h1 style="color: var(--primary-blue); font-size: 32px; margin-top: 20px; font-weight: 900; letter-spacing: -1px;">
+                    {% if edit_user %}Edit Voter Profile{% else %}Create New System User{% endif %}
+                </h1>
+                
+                {% if edit_user %}
+                <p style="color: #94A3B8; font-size: 14px; margin-top: 5px;">
+                    Modifying credentials for: <strong style="color: var(--primary-blue);">{{ edit_user.username }}</strong>
+                </p>
+                {% else %}
+                <p style="color: #94A3B8; font-size: 14px; margin-top: 5px;">Register a new administrator or standard voter.</p>
+                {% endif %}
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{ edit_user.username|default:'' }}" placeholder="e.g. jdoe254" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" value="{{ edit_user.email|default:'' }}" placeholder="name@example.com" required>
+                    </div>
+
+                    {% if not edit_user %}
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Temporary Password</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                        <small style="color: #94A3B8; font-size: 11px;">User can change this after their first login.</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label>National ID Number</label>
+                        <input type="text" name="national_id" value="{{ profile.national_id|default:'' }}" placeholder="e.g. 12345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>System Role</label>
+                        <select name="role" class="custom-select">
+                            <option value="voter" {% if profile.role == 'voter' %}selected{% endif %}>Standard Voter</option>
+                            <option value="admin" {% if profile.role == 'admin' %}selected{% endif %}>Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Registered County</label>
+                        <select name="county" class="custom-select">
+                            {% if profile.county %}
+                            <option value="{{ profile.county }}" selected>{{ profile.county }} (Current)</option>
+                            {% endif %}
+                            <option value="Nairobi">Nairobi</option>
+                            <option value="Mombasa">Mombasa</option>
+                            <option value="Kisumu">Kisumu</option>
+                            <option value="Nakuru">Nakuru</option>
+                            <option value="Kiambu">Kiambu</option>
+                            <option value="Uasin Gishu">Uasin Gishu</option>
+                            <option value="Bungoma">Bungoma</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    {% if edit_user %}
+                        <i class="fa-solid fa-floppy-disk"></i> Save Updated Profile
+                    {% else %}
+                        <i class="fa-solid fa-user-plus"></i> Confirm & Create User
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-group { margin-bottom: 5px; }
+    .form-group label { 
+        display: block; 
+        font-size: 11px; 
+        font-weight: 800; 
+        color: var(--primary-blue); 
+        text-transform: uppercase; 
+        margin-bottom: 8px; 
+        letter-spacing: 0.5px;
+    }
+    
+    input, .custom-select { 
+        width: 100%; 
+        padding: 14px 18px; 
+        border: 2px solid #F1F5F9; 
+        border-radius: 14px; 
+        font-size: 14px; 
+        outline: none; 
+        transition: 0.3s;
+        background: #F8FAFC;
+    }
+
+    input:focus, .custom-select:focus { 
+        border-color: var(--accent-blue); 
+        background: white;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .submit-btn { 
+        width: 100%; 
+        margin-top: 35px; 
+        padding: 18px; 
+        border-radius: 16px; 
+        border: none; 
+        background: var(--primary-blue); 
+        color: white; 
+        font-weight: 800; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-btn:hover { 
+        background: var(--accent-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .custom-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230a2564' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+    }
+</style>
+{% endblock %}

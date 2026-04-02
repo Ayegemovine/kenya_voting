@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <h1 style="color: var(--primary-blue); margin-bottom: 30px;">National Participation Map</h1>
+    
+    <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 30px;">
+        <div id="map" style="height: 600px; background: #f8fafc; border-radius: 30px; border: 1px solid #e2e8f0; overflow: hidden;"></div>
+
+        <div style="background: white; padding: 30px; border-radius: 30px; border: 1px solid #e2e8f0;">
+            <h3 style="font-size: 14px; text-transform: uppercase; color: #94a3b8; margin-bottom: 20px;">Live Turnout</h3>
+            <div id="county-info" style="font-size: 15px; color: var(--primary-blue);">
+                <p>Hover over a county to see voter turnout statistics.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    const voteData = {{ stats_json|safe }};
+    const map = L.map('map').setView([-1.286389, 36.817223], 6); // Centered on Kenya
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Fetch the County Boundaries (You can download this GeoJSON online)
+    fetch('/static/data/kenya_counties.json')
+        .then(res => res.json())
+        .then(geoData => {
+            L.geoJson(geoData, {
+                style: function(feature) {
+                    const count = voteData[feature.properties.name] || 0;
+                    return {
+                        fillColor: count > 100 ? '#0A2564' : count > 50 ? '#1E40AF' : '#DBEAFE',
+                        weight: 1,
+                        opacity: 1,
+                        color: 'white',
+                        fillOpacity: 0.8
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    layer.on('mouseover', function() {
+                        const count = voteData[feature.properties.name] || 0;
+                        document.getElementById('county-info').innerHTML = `
+                            <h2 style="font-weight: 800;">${feature.properties.name}</h2>
+                            <p style="font-size: 24px; color: #10B981;">${count} Votes</p>
+                        `;
+                    });
+                }
+            }).addTo(map);
+        });
+</script>
+{% endblock %}

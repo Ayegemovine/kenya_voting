@@ -1,0 +1,93 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Ballot Ledger{% endblock %}
+{% block page_title %}Ballot Ledger & Timeline Management{% endblock %}
+
+{% block admin_content %}
+<div class="page-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div class="ledger-info">
+        <p style="margin: 0; color: #94a3b8; font-size: 13px; font-weight: 600;">System Timeline Management</p>
+    </div>
+    <a href="{% url 'create_poll' %}" class="btn-launch" 
+       style="background: var(--primary); color: white; padding: 14px 24px; border-radius: 16px; text-decoration: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: 0.3s;">
+        <i class="fa-solid fa-plus"></i> Launch New Ballot
+    </a>
+</div>
+
+<div class="table-card" style="background: white; border-radius: 30px; border: 1px solid var(--border); overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8fafc;">
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Ballot Title & ID</th>
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Status</th>
+                <th style="text-align: left; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Closing Date</th>
+                <th style="text-align: right; padding: 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; border-bottom: 2px solid #f1f5f9;">Management</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for poll in polls %}
+            <tr>
+                <td style="padding: 22px 20px; border-bottom: 1px solid #f1f5f9;">
+                    <div class="poll-info" style="display: flex; align-items: center; gap: 15px;">
+                        <div class="poll-icon" style="width: 42px; height: 42px; border-radius: 12px; background: #f1f5f9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <div>
+                            <span style="display: block; font-weight: 700; color: var(--primary); font-size: 15px;">{{ poll.text }}</span>
+                            <span style="font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Ref: #{{ poll.id|add:"1000" }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 22px 20px; border-bottom: 1px solid #f1f5f9;">
+                    {% if poll.deadline > now or not poll.deadline %}
+                        <span class="badge live" style="padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #ecfdf5; color: #059669; display: inline-flex; align-items: center; gap: 6px;">
+                            <span class="pulse-dot" style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: pulse 1.5s infinite;"></span> Active
+                        </span>
+                    {% else %}
+                        <span class="badge expired" style="padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: #fff1f2; color: #e11d48;">Closed</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 22px 20px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 600; color: #64748b;">
+                        {% if poll.deadline %}
+                            <i class="fa-regular fa-calendar-clock"></i> {{ poll.deadline|date:"M d, Y • H:i" }}
+                        {% else %}
+                            <span style="color: #cbd5e1;">No Deadline Set</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td style="padding: 22px 20px; border-bottom: 1px solid #f1f5f9; text-align: right;">
+                    <a href="{% url 'delete_poll' poll.id %}" onclick="return confirm('Archive this ballot?')" 
+                       style="width: 40px; height: 40px; border-radius: 12px; background: #fff1f2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="table-footer" style="padding: 20px 40px; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; color: #94a3b8; font-weight: 700;">
+            Showing {{ polls.start_index }} - {{ polls.end_index }} of {{ polls.paginator.count }} Ballots
+        </span>
+        <div style="display: flex; gap: 10px;">
+            {% if polls.has_previous %}
+                <a href="?page={{ polls.previous_page_number }}" class="nav-btn" style="padding: 10px 20px; border-radius: 12px; background: white; border: 1px solid var(--border); color: var(--primary); text-decoration: none; font-weight: 700; font-size: 13px;">Previous</a>
+            {% endif %}
+            {% if polls.has_next %}
+                <a href="?page={{ polls.next_page_number }}" class="nav-btn" style="padding: 10px 20px; border-radius: 12px; background: white; border: 1px solid var(--border); color: var(--primary); text-decoration: none; font-weight: 700; font-size: 13px;">Next Page</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-launch:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1); }
+    .btn-delete:hover { background: #ef4444 !important; color: white !important; transform: scale(1.1); }
+    .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+</style>
+{% endblock %}
